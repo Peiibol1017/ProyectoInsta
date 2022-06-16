@@ -39,8 +39,8 @@ app.use('/uploads', express.static('./uploads'));
 app.post('/user', newUserController);
 app.get('/user/:id', getUserController);
 app.post('/login', loginController);
-app.get('/user', authUser, getOwnController);
-app.patch('/user/:id', authUser, changeUserDataController);
+app.get('/profile', authUser, getOwnController);
+app.patch('/edit/:id', authUser, changeUserDataController);
 
 app.get('/', getPostsController);
 app.get('/search', searchPostsController);

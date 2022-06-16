@@ -98,11 +98,10 @@ const loginController = async (req, res, next) => {
 const changeUserDataController = async (req, res, next) => {
   try {
     const {id} = req.params;
-    const {name, surname, age, email, password, newPassword,} = req.body;
+    const {name, surname, email, password, newPassword,} = req.body;
     const schema = Joi.object().keys({
       name: Joi.string().min(2).max(10).required(),
       surname:Joi.string().min(2).max(10).required(),
-      age: Joi.number().min(14).max(127).required(),
       email: Joi.string().trim().email().required(),
       password: Joi.string().min(5).max(10).required(),
       newPassword: Joi.string().min(5).max(10).required(),
@@ -121,7 +120,7 @@ const changeUserDataController = async (req, res, next) => {
     if (!comparePassword) {
       throw generateError('Contraseña incorrecta', 401);
     }
-        const result = await changeUserData(name, surname, age, email, newPassword, id);
+        const result = await changeUserData(name, surname, email, newPassword, id);
 
     res.send({
       status: 'ok',

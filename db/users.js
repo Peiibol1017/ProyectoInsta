@@ -71,7 +71,7 @@ const createNewUser = async (name, surname, age, username, email, password) => {
   }
 };
 
-const changeUserData = async (name, surname, age, email, newPassword, id) => {
+const changeUserData = async (name, surname, email, newPassword, id) => {
     let connection;
   try {
     connection = await getConnection();
@@ -79,8 +79,8 @@ const changeUserData = async (name, surname, age, email, newPassword, id) => {
     const passwordCrypt = await bcrypt.hash(newPassword, 8);
 
     const [modifiedUser] = await connection.query(
-      `UPDATE users SET name=?, surname=?, age=?, email=?, password=? WHERE id = ?`,
-      [name, surname, age, email, passwordCrypt, id]);
+      `UPDATE users SET name=?, surname=?, email=?, password=? WHERE id = ?`,
+      [name, surname, email, passwordCrypt, id]);
 
     return modifiedUser.insertId;
   } finally {
