@@ -45,6 +45,12 @@ const newPostController = async (req, res, next) => {
       );
     }
     const { mess } = req.body;
+    if (mess.length > 250) {
+      throw generateError(
+        '250 caracteres deberían ser suficientes para un mensaje no? no te excedas',
+        400
+      )
+    }
     const id = await createPost(req.userId, imageFileName, text, mess);
 
     res.send({
