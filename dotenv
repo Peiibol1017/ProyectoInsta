@@ -1,5 +1,5 @@
-MYSQL_HOST = 
-MYSQL_USER = 
-MYSQL_PASSWORD = 
-MYSQL_DATABASE = 
-SECRET = 
+MYSQL_HOST = direccion base de datos
+MYSQL_USER = user base de datos
+MYSQL_PASSWORD = pass base de datos
+MYSQL_DATABASE = nombre base de datos
+SECRET = valor aleatorio para los randomizadores
