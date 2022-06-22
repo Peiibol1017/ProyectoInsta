@@ -29,7 +29,7 @@ const getUserById = async (id) => {
     connection = await getConnection();
     const [result] = await connection.query(
       `
-  SELECT id, username, email, created_at FROM users WHERE id=?
+  SELECT * FROM users WHERE id=?
   `,
       [id]
     );
@@ -42,7 +42,7 @@ const getUserById = async (id) => {
   }
 };
 
-const createNewUser = async (username, email, password) => {
+const createNewUser = async (name, surname, age, username, email, password) => {
   let connection;
   try {
     connection = await getConnection();
@@ -62,8 +62,8 @@ const createNewUser = async (username, email, password) => {
 
     const [newUser] = await connection.query(
       `
-    INSERT INTO users (username, email, password) VALUES (?, ?, ?)`,
-      [username, email, passwordCrypt]
+    INSERT INTO users (name, surname, age, username, email, password) VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, surname, age, username, email, passwordCrypt]
     );
     return newUser.insertId;
   } finally {
@@ -71,8 +71,27 @@ const createNewUser = async (username, email, password) => {
   }
 };
 
+const changeUserData = async (name, surname, email, newPassword, id) => {
+    let connection;
+  try {
+    connection = await getConnection();
+
+    const passwordCrypt = await bcrypt.hash(newPassword, 8);
+
+    const [modifiedUser] = await connection.query(
+      `UPDATE users SET name=?, surname=?, email=?, password=? WHERE id = ?`,
+      [name, surname, email, passwordCrypt, id]);
+
+    return modifiedUser.insertId;
+  } finally {
+    if (connection) connection.release();
+  }
+}
+
+
 module.exports = {
   createNewUser,
   getUserById,
   getUserByUsername,
+  changeUserData,
 };

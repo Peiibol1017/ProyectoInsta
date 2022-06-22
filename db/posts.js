@@ -8,7 +8,7 @@ const getSinglePost = async (id) => {
     connection = await getConnection();
     const [result] = await connection.query(
       `
-        SELECT * FROM posts WHERE id = ?`,
+        SELECT posts.*, users.name, users.surname, users.email, users.username FROM posts LEFT JOIN users on posts.user_id = users.id WHERE posts.id = ?`,
       [id]
     );
     if (result.length === 0) {
@@ -26,7 +26,7 @@ const getPostsByUserId = async (id) => {
     connection = await getConnection();
     const [result] = await connection.query(
       `
-        SELECT * FROM posts WHERE user_id = ?`,
+ SELECT posts.*, users.name, users.surname, users.email, users.username FROM posts LEFT JOIN users on posts.user_id = users.id WHERE user_id = ?`,
       [id]
     );
     if (result.length === 0) {
@@ -62,7 +62,7 @@ const getAllPosts = async () => {
   try {
     connection = await getConnection();
     const [result] = await connection.query(`
-SELECT * FROM posts order BY created_at DESC
+SELECT posts.*, users.name, users.surname, users.email, users.username FROM posts LEFT JOIN users on posts.user_id = users.id order BY created_at DESC
 `);
     return result;
   } finally {
@@ -91,17 +91,28 @@ const createPost = async (userId, image, text = '', mess) => {
 
 const setLikedPosts = async (userId, postId) => {
   let connection;
+
   try {
     connection = await getConnection();
 
     const [result] = await connection.query(
       `
+        SELECT id FROM liked WHERE user_id = ? and post_id = ?`,
+
+      [userId, postId]
+    );
+    console.log(result)
+    if (result.length !== 0) {
+      throw generateError('ya le has dado a me gusta,', 400);
+    }
+    const [insert] = await connection.query(
+         `
          INSERT INTO liked (user_id, post_id)
          VALUES (?,?)
          `,
-      [userId, postId]
-    );
-    return result.insertId;
+      [userId, postId])
+
+    return insert.insertId;
   } finally {
     if (connection) connection.release();
   }
@@ -113,7 +124,7 @@ const getLikedPosts = async (id) => {
     connection = await getConnection();
     const [result] = await connection.query(
       `
-        SELECT * FROM liked INNER JOIN posts ON liked.post_id = posts.id WHERE liked.user_id= ?;
+        SELECT * FROM liked INNER JOIN posts ON liked.post_id = posts.id INNER JOIN users ON liked.user_id = users.id WHERE liked.user_id= ?;
     `,
       [id]
     );

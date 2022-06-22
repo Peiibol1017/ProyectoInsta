@@ -3,11 +3,13 @@ require('dotenv').config();
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const morgan = require('morgan');
-
+const cors = require('cors')
 const {
   newUserController,
   getUserController,
   loginController,
+  changeUserDataController,
+  getOwnController,
 } = require('./controllers/users');
 
 const {
@@ -20,12 +22,14 @@ const {
   getLikedPostsController,
   deleteLikedPostsController,
   searchPostsController,
+
 } = require('./controllers/posts');
 
 const { authUser } = require('./middlewares/authorization');
 
 const app = express();
 
+app.use(cors())
 app.use(express.json());
 app.use(fileUpload());
 app.use(morgan('dev'));
@@ -35,6 +39,8 @@ app.use('/uploads', express.static('./uploads'));
 app.post('/user', newUserController);
 app.get('/user/:id', getUserController);
 app.post('/login', loginController);
+app.get('/profile', authUser, getOwnController);
+app.patch('/edit/:id', authUser, changeUserDataController);
 
 app.get('/', getPostsController);
 app.get('/search', searchPostsController);
@@ -45,6 +51,7 @@ app.delete('/post/:id', authUser, deletePostController);
 app.post('/post/:id/liked', authUser, setLikedPostsController);
 app.get('/liked/user', authUser, getLikedPostsController);
 app.delete('/post/:id/liked', authUser, deleteLikedPostsController);
+
 
 // 404
 app.use((req, res) => {
@@ -62,6 +69,6 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(3000, () => {
+app.listen(3001, () => {
   console.log('servidor funcionando! ');
 });

@@ -13,6 +13,9 @@ async function main() {
     await connection.query(`
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR (100) NOT NULL,
+    surname VARCHAR (100) NOT NULL,
+    age TINYINT NOT NULL,
     username VARCHAR(100) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(100) NOT NULL,
@@ -24,7 +27,7 @@ CREATE TABLE posts (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     user_id INTEGER NOT NULL,
     image VARCHAR(100) NOT NULL,
-    text VARCHAR(100) NOT NULL FULLTEXT,
+    text VARCHAR(100) NOT NULL,
     mess VARCHAR (250),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
